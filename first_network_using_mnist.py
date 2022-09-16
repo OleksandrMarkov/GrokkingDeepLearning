@@ -44,3 +44,4 @@ for j in range(iterations):
     sys.stdout.write("\r I:"+str(j)+ \
                      " Train-Err:" + str(error/float(len(images)))[0:5] +\
                      " Train-Acc:" + str(correct_cnt/float(len(images))))
+                   
