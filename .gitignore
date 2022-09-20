@@ -4,3 +4,5 @@ draft.py
 
 labels.txt
 reviews.txt
+
+__pycache__/
