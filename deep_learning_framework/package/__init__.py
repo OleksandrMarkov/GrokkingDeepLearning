@@ -1,0 +1,1 @@
+NAME = "package_with_mini_framework"
