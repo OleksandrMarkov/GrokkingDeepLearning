@@ -12,7 +12,7 @@ from keras import models, layers
 #model.compile(optimizer = 'rmsprop', loss = 'sparse_categorical_crossentropy', metrics = ['accuracy'])
 
 
-# output the train image
+# show the train image
 digit = train_images[4]
 import matplotlib.pyplot as plt
 plt.imshow(digit, cmap=plt.cm.binary)
@@ -24,7 +24,7 @@ plt.show()
 #test_images = test_images.reshape((10000, 28*28))
 #test_images = test_images.astype('float32') / 255
 
-# learning
+# learning (сеть перебирает по 128 образцов). Всего 5 итераций по всем данным (эпоха).
 #model.fit(train_images, train_labels, epochs = 5, batch_size = 128)
 
 #test_loss, test_acc = model.evaluate(test_images, test_labels)
