@@ -1,8 +1,10 @@
 env/
+venv/
+audioenv/
 draft.txt
 draft.py
-
+archive.zip
 labels.txt
 reviews.txt
-
+package/
 __pycache__/
