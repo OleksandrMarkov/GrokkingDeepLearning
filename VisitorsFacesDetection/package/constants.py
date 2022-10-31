@@ -45,6 +45,8 @@ CANT_LAUNCH = "Неможливо відтворити відеофайл!"
 #CANT_STOP = "Відео не запущено!"
 CANT_ADD_IMGS = "Спочатку вставте накопичувач з папкою \"photos\"" 
 
+CANT_DISPLAY_VIDEO = "Розмір відео завеликий!"
+
 # Labels on buttons
 SELECT_VIDEO = "Вибрати відеозапис"
 START_RECOGNITION = "Почати розпізнавання"

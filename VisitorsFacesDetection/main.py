@@ -8,7 +8,8 @@ from tkinter import filedialog
 from shutil import copyfile, ignore_patterns
 
 import PIL.Image, PIL.ImageTk
-import cv2
+import cv2#, face_recognition
+
 import os
 import subprocess # detect USB flash drive
 import time
@@ -26,7 +27,6 @@ class App:
         #screen_width, screen_height = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
         #center_x, center_y = int(screen_width/2 - window_width/2), int(screen_height/2 - window_height/2)
         #self.window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
-
 
         self.launch = False 
         self.selected_video = None 
@@ -90,21 +90,21 @@ class App:
             filetypes = VIDEOTYPES)
         
         self.selected_video = self.filename
-        
         if self.selected_video:
-            messagebox.showinfo(message = LAUNCH)
+            # Open the video file
+            self.cap = cv2.VideoCapture(self.selected_video)
+            self.width = self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+            self.height = self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+            
+            # Canvas for the video
+            if self.width > 0 and self.height > 0:
+                if self.width <= 860 and self.height <= 480:
+                    messagebox.showinfo(message = LAUNCH) 
+                    self.canvas.config(width = self.width, height = self.height)
+                else:
+                    messagebox.showerror(title = TITLE_ERROR, message = CANT_DISPLAY_VIDEO)                        
         else:
             self.selected_video = None
-
-        # Open the video file
-        self.cap = cv2.VideoCapture(self.selected_video)
-
-        self.width = self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-        self.height = self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-
-        # Canvas for the video
-        if self.width > 0 and self.height > 0:
-            self.canvas.config(width = self.width, height = self.height)
 
     def add_photos(self):
         out = subprocess.check_output(DISKS_CAPTIONS, shell = True) 
@@ -181,28 +181,31 @@ class App:
             return
         else:
             try: 
+                model = cv2.CascadeClassifier(FACE_RECOG_MODEL)
                 # Process all images from photos folder except processed photos
                 for (root, dirs, imgs) in os.walk(PHOTOS_FOLDER):                        
                     for img_name in imgs:
-                        if (".jpg" in img_name or ".png" in img_name or ".gif" in img_name) and (PROCESSED_PHOTOS_FOLDER not in os.path.join(root, img_name)):
+                        #print(img_name)
+                        if (".jpg" in img_name or ".png" in img_name or ".gif" in img_name):
+                        #and (PROCESSED_PHOTOS_FOLDER not in os.path.join(root, img_name)):
+                            
                             # Firstly leave only face on photo
-
-                            #print(os.path.join(root, img_name).replace('\\', '/')) # dataset/photos/gilardino7we8sp_971483767_1_add.png
-                            #print(img_name) # gilardino7we8sp_971483767_1_add.png
-
                             img = cv2.imread(rf"{PHOTOS_FOLDER}/{img_name}")
 
-                            model = cv2.CascadeClassifier(FACE_RECOG_MODEL) 
+                            # change scaleFactor [1.1 ; 3],  minNeighbors [2; 5]
                             faces = model.detectMultiScale(img, scaleFactor = 1.1, minNeighbors = 2)
+                            
+                            # Все лица распознаются, но обрезка только для 1-го по списку изображения
                             if len(faces) != 0:
-                                for index, (x,y,w,h) in enumerate(faces):
-                                    img = img[x:y+h]
-                                    if ".jpg" in img_name:
-                                        cv2.imwrite(f"{PROCESSED_PHOTOS_FOLDER}/{img_name}", img) # "tmp.jpg" 
-                                    elif ".png" in img_name:
-                                        cv2.imwrite(f"{PROCESSED_PHOTOS_FOLDER}/{img_name}", img) # "tmp.png" 
-                                    else:
-                                        cv2.imwrite(f"{PROCESSED_PHOTOS_FOLDER}/{img_name}", img) # "tmp.gif" 
+                                print(img_name)
+                                #for index, (x,y,w,h) in enumerate(faces):
+                                #    img = img[x:y+h]
+                                #    if ".jpg" in img_name:
+                                #        cv2.imwrite(f"{PROCESSED_PHOTOS_FOLDER}/{img_name}", img)
+                                #    elif ".png" in img_name:
+                                #        cv2.imwrite(f"{PROCESSED_PHOTOS_FOLDER}/{img_name}", img)
+                                #    else:
+                                #        cv2.imwrite(f"{PROCESSED_PHOTOS_FOLDER}/{img_name}", img)           
                 messagebox.showinfo(message = "All photos are processed!")            
             except:
                 pass    
