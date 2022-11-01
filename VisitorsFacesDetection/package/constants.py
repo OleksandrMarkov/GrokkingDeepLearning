@@ -18,7 +18,7 @@ PHOTOS_FOLDER = "dataset/photos"
 #SCREENSHOTS_FOLDER = "C:/Users/ALEX/Documents/grokkingDeepLearning/VisitorsFacesDetection/screenshots"
 SCREENSHOTS_FOLDER = "screenshots" 
 
-PROCESSED_PHOTOS_FOLDER = "dataset/processed photos"
+PROCESSED_PHOTOS_FOLDER = "dataset/photos/processed photos"
 
 SELECT_VIDEO = "Оберіть відеозапис"
 SELECT_IMG = "Оберіть зображення"
