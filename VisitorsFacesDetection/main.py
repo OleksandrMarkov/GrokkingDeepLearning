@@ -8,7 +8,8 @@ from tkinter import filedialog
 from shutil import copyfile, ignore_patterns
 
 import PIL.Image, PIL.ImageTk
-import cv2#, face_recognition
+import cv2
+#import face_recognition
 
 import os
 import subprocess # detect USB flash drive
@@ -180,35 +181,31 @@ class App:
             messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
             return
         else:
-            try: 
-                model = cv2.CascadeClassifier(FACE_RECOG_MODEL)
-                # Process all images from photos folder except processed photos
-                for (root, dirs, imgs) in os.walk(PHOTOS_FOLDER):                        
+            for (root, dirs, imgs) in os.walk(PHOTOS_FOLDER):                        
                     for img_name in imgs:
-                        #print(img_name)
-                        if (".jpg" in img_name or ".png" in img_name or ".gif" in img_name):
-                        #and (PROCESSED_PHOTOS_FOLDER not in os.path.join(root, img_name)):
-                            
-                            # Firstly leave only face on photo
-                            img = cv2.imread(rf"{PHOTOS_FOLDER}/{img_name}")
+                        if (".jpg" in img_name or ".png" in img_name or ".gif" in img_name) and (PROCESSED_PHOTOS_FOLDER not in os.path.join(root, img_name)):
+                            #print(img_name)
+                            try:
+                                img = cv2.imread(rf"{PHOTOS_FOLDER}/{img_name}")
+                                gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-                            # change scaleFactor [1.1 ; 3],  minNeighbors [2; 5]
-                            faces = model.detectMultiScale(img, scaleFactor = 1.1, minNeighbors = 2)
-                            
-                            # Все лица распознаются, но обрезка только для 1-го по списку изображения
-                            if len(faces) != 0:
+                                # Cropping Faces from Images
+                                face_cascade = cv2.CascadeClassifier(FACE_RECOG_MODEL)
+                                faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+                                for (x, y, w, h) in faces:
+                                    #img = img[x:y+h]
+                                    img = img[y:y + h, x:x + w]
+                                    cv2.imwrite(f"{PROCESSED_PHOTOS_FOLDER}/{img_name}", img)
                                 print(img_name)
-                                #for index, (x,y,w,h) in enumerate(faces):
-                                #    img = img[x:y+h]
-                                #    if ".jpg" in img_name:
-                                #        cv2.imwrite(f"{PROCESSED_PHOTOS_FOLDER}/{img_name}", img)
-                                #    elif ".png" in img_name:
-                                #        cv2.imwrite(f"{PROCESSED_PHOTOS_FOLDER}/{img_name}", img)
-                                #    else:
-                                #        cv2.imwrite(f"{PROCESSED_PHOTOS_FOLDER}/{img_name}", img)           
-                messagebox.showinfo(message = "All photos are processed!")            
-            except:
-                pass    
+                            except:    
+                                pass               
+            messagebox.showinfo(message = "All photos are processed!")                        
+
+                            
+
+
+            #cap = cv2.VideoCapture(self.selected_video)
+            #print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
     # Release the video source when the object is destroyed
     def __del__(self):
