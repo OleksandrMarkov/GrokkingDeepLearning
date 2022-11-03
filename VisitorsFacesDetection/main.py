@@ -9,7 +9,8 @@ from shutil import copyfile, ignore_patterns
 
 import PIL.Image, PIL.ImageTk
 import cv2
-#import face_recognition
+
+import face_recognition  #pip install dlib & pip install face-recognition 
 
 import os
 import subprocess # detect USB flash drive
@@ -152,13 +153,13 @@ class App:
             pass
 
     def pause_video(self):
-        #if self.pause == True:
-        #    messagebox.showerror(title=TITLE_ERROR, message = NOT_SELECTED)
-        #if self.selected_video is None:
-        #    messagebox.showerror(title=TITLE_ERROR, message=NOT_SELECTED)
-        #    return
-        if self.pause == True or self.selected_video is None: 
+        if self.pause == True:
+            pass
+        if self.selected_video is None:
             messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
+
+        #if self.pause == True or self.selected_video is None: 
+        #    messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
         self.pause = True
 
     def relaunch_video(self):
@@ -181,31 +182,53 @@ class App:
             messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
             return
         else:
+            cap = cv2.VideoCapture(self.selected_video.split(f"{VIDEOS_FOLDER}/")[1])            
+            face_cascade = cv2.CascadeClassifier(FACE_RECOG_MODEL)
+            
+            photos_database = []
+
+            # Cropping Faces from Images
             for (root, dirs, imgs) in os.walk(PHOTOS_FOLDER):                        
                     for img_name in imgs:
-                        if (".jpg" in img_name or ".png" in img_name or ".gif" in img_name) and (PROCESSED_PHOTOS_FOLDER not in os.path.join(root, img_name)):
-                            #print(img_name)
+                        if (".jpg" in img_name or ".png" in img_name or ".gif" in img_name) and (PROCESSED_PHOTOS_FOLDER not in os.path.join(root, img_name).replace("\\", "/")):
+                            #print(os.path.join(root, img_name).replace("\\", "/")) # dataset/photos/pink/y/Pink_1.png
                             try:
-                                img = cv2.imread(rf"{PHOTOS_FOLDER}/{img_name}")
+                                img = cv2.imread(os.path.join(root, img_name).replace("\\", "/"))
+                                #img = cv2.imread(rf"{PHOTOS_FOLDER}/{img_name}")
                                 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-                                # Cropping Faces from Images
-                                face_cascade = cv2.CascadeClassifier(FACE_RECOG_MODEL)
-                                faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+                                #face_cascade = cv2.CascadeClassifier(FACE_RECOG_MODEL)
+                                faces = face_cascade.detectMultiScale(gray, scaleFactor = 1.1, minNeighbors = 4)
+                                
                                 for (x, y, w, h) in faces:
                                     #img = img[x:y+h]
                                     img = img[y:y + h, x:x + w]
-                                    cv2.imwrite(f"{PROCESSED_PHOTOS_FOLDER}/{img_name}", img)
-                                print(img_name)
-                            except:    
-                                pass               
-            messagebox.showinfo(message = "All photos are processed!")                        
+                                    way_to_cropped_img = f"{PROCESSED_PHOTOS_FOLDER}/{img_name}"        
+                                    cv2.imwrite(way_to_cropped_img, img)
+                                    photos_database += [way_to_cropped_img]
+                            except:
+                                pass           
+            messagebox.showinfo(message = "All photos are processed!")
+            
+            print(photos_database) # ALL CROPPED FACES 
+            
+            # Faces recognition
+            
+            #while True:
+            #    success,img = cap.read()
+            #    faces = face_cascade.detectMultiScale(img, scaleFactor = 1.1, minNeighbors = 4)
+            #    if len(faces) != 0:
+            #        unknown_face = face_recognition.face_encodings(img)
 
-                            
+            #        for photo in photos_database:
+            #            img_to_rec = face_recognition.load_image_file(photo)
+            #            img_enc = face_recognition.face_encodings(img_to_rec)[0]
 
-
-            #cap = cv2.VideoCapture(self.selected_video)
-            #print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            #            compare = face_recognition.compare_faces([unknown_face], img_enc)
+            #            if compare == True:
+            #                print(1)
+            #            else:
+            #                print(2)    
 
     # Release the video source when the object is destroyed
     def __del__(self):
