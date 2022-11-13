@@ -89,14 +89,14 @@ class App():
 	def open_video(self):
 		self.pause = False
 
-		self.filename = filedialog.askopenfilename(title = SELECT_VIDEO,
-			initialdir = VIDEOS_FOLDER,
-			filetypes = VIDEOTYPES)
-		#self.filename = 
+		#self.filename = filedialog.askopenfilename(title = SELECT_VIDEO,
+		#	initialdir = VIDEOS_FOLDER,
+		#	filetypes = VIDEOTYPES)
+		#self.filename = self.helper.get_videofile() 
 		
-		self.selected_video = self.filename
+		self.selected_video = self.helper.get_videofile()
+
 		if self.selected_video:
-			#helper = Helper()
 			self.helper.remove_old_snapshots(SNAPSHOTS_FOLDER)
 
 			# fix the canvas
@@ -105,11 +105,10 @@ class App():
 			self.height = self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 			
 			# Полотно для відео
-			if self.width > 0 and self.height > 0:
-				if self.width <= 860 and self.height <= 480:
+			if 0 < self.width <= 860 and 0 < self.height <= 480:
 					messagebox.showinfo(message = LAUNCH) 
 					self.canvas.config(width = self.width, height = self.height)
-				else:
+			else:
 					messagebox.showerror(title = TITLE_ERROR, message = CANT_DISPLAY_VIDEO)						
 		else:
 			self.selected_video = None
