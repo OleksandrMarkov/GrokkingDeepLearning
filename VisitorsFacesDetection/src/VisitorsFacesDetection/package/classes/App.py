@@ -1,30 +1,27 @@
 from tkinter import *
 from tkinter import messagebox
-
 from package.constants import *
-
 from tkinter import filedialog
-
 from shutil import copyfile, ignore_patterns
 
-#from Helper import *
-#import Helper
 from package.classes.Helper import *
+from package.classes.Alerts import *
 
 import PIL.Image, PIL.ImageTk
 import cv2
-
 import face_recognition  #pip install dlib & pip install face-recognition 
 
 import os, shutil
 
-import subprocess # для виявлення флешки
 import time
 
 class App():
 	def __init__(self, window):
 
 		self.helper = Helper()
+		self.error = Error()
+		self.info = Info()
+
 		self.window = window
 		self.window.title(WINDOW_TITLE)
 
@@ -44,7 +41,8 @@ class App():
 		btn_frame = Frame(self.window, bg = BTN_FRAME_COLOR)
 		btn_frame.pack(side = BOTTOM, pady = 5)
 
-		self.pause = False   # Керування кнопкою "Пауза"
+		# Керування кнопкою "Пауза"
+		self.pause = False
 
 		self.canvas = Canvas(top_frame)
 		self.canvas.pack()
@@ -58,7 +56,7 @@ class App():
 		self.btn_recognize_faces.grid(row = 0, column = 1, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		# Кнопка "Оновити колекцію зображень"
-		self.btn_update_photo_collection = Button(btn_frame, text = NEW_IMGS, width = BTN_W, command = self.update_photo_collection)
+		self.btn_update_photo_collection = Button(btn_frame, text = NEW_IMAGES, width = BTN_W, command = self.update_photo_collection)
 		self.btn_update_photo_collection.grid(row = 0, column = 2, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		# Кнопка "Довідка"
@@ -85,50 +83,72 @@ class App():
 		self.window.mainloop()
 
 
+	def frames_are_of_acceptable_size(self, selected_video):
+		self.cap = cv2.VideoCapture(selected_video) 
+		canvas_width, canvas_height = self.get_frame_size(selected_video)
+
+		if MAX_FRAME_WIDTH >= canvas_width > 0 and MAX_FRAME_HEIGHT >= canvas_height > 0:
+			#print(canvas_width)
+			#print(canvas_height)
+			return True
+		return False	
+	
+	def get_frame_size(self, selected_video):
+		cap = cv2.VideoCapture(selected_video)
+		canvas_width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+		canvas_height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+		return canvas_width, canvas_height
+
+	def configure_the_canvas(self, canvas, selected_video):
+		return canvas.config(width = self.get_frame_size(selected_video)[0],
+			height = self.get_frame_size(selected_video)[1])
+
 	# Відкрити відеозапис	
 	def open_video(self):
 		self.pause = False
-
-		#self.filename = filedialog.askopenfilename(title = SELECT_VIDEO,
-		#	initialdir = VIDEOS_FOLDER,
-		#	filetypes = VIDEOTYPES)
-		#self.filename = self.helper.get_videofile() 
 		
 		self.selected_video = self.helper.get_videofile()
 
 		if self.selected_video:
 			self.helper.remove_old_snapshots(SNAPSHOTS_FOLDER)
 
-			# fix the canvas
-			self.cap = cv2.VideoCapture(self.selected_video)
-			self.width = self.cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-			self.height = self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-			
-			# Полотно для відео
-			if 0 < self.width <= 860 and 0 < self.height <= 480:
-					messagebox.showinfo(message = LAUNCH) 
-					self.canvas.config(width = self.width, height = self.height)
+			# configure the canvas			
+			if self.frames_are_of_acceptable_size(self.selected_video):
+				self.info.show(message = LAUNCH)
+				#messagebox.showinfo(message = LAUNCH)
+				self.configure_the_canvas(self.canvas, self.selected_video)
 			else:
-					messagebox.showerror(title = TITLE_ERROR, message = CANT_DISPLAY_VIDEO)						
+				#messagebox.showerror(title = TITLE_ERROR, message = CANT_DISPLAY_VIDEO)
+				self.error.show(message = CANT_DISPLAY_VIDEO)
 		else:
 			self.selected_video = None
 
 	def update_photo_collection(self):
-		out = subprocess.check_output(DISKS_CAPTIONS, shell = True) 
-		PATHS_TO_NEW_IMGS = ""
-		for drive in str(out).strip().split('\\r\\r\\n'):
-			if '2' in drive:
-				drive_letter = drive.split(':')[0]
-				if drive_letter not in ('C', 'D'): # Флешку вставлено?
-					PATHS_TO_NEW_IMGS = f"{drive_letter}:/photos"
-					break
-		try: 
-			new_photos = os.listdir(PATHS_TO_NEW_IMGS)
-			for n in new_photos:
-				if n.endswith(('jpg', 'png', 'gif')):
-					copyfile(f"{PATHS_TO_NEW_IMGS}/{n}", f"{PHOTOS_FOLDER}/{n}")
-		except:
-			messagebox.showerror(title = TITLE_ERROR, message = CANT_ADD_IMGS)
+		path_to_new_collection = self.helper.get_path_to_new_collection()
+		if path_to_new_collection is not None:
+			try:
+				new_collection = self.helper.get_new_collection(path_to_new_images)
+				self.helper.move_images(new_collection, path_to_new_collection)
+			except:
+				self.error.show(message = CANT_ADD_IMAGES)
+
+	#def update_photo_collection(self):
+	#	out = subprocess.check_output(DISKS_CAPTIONS, shell = True) 
+	#	PATHS_TO_NEW_IMAGES = ""
+	#	for drive in str(out).strip().split('\\r\\r\\n'):
+	#		if '2' in drive:
+	#			drive_letter = drive.split(':')[0]
+	#			if drive_letter not in ('C', 'D'): # Флешку вставлено?
+	#				PATHS_TO_NEW_IMAGES = f"{drive_letter}:/photos"
+	#				break
+	#	try: 
+	#		new_photos = os.listdir(PATHS_TO_NEW_IMAGES)
+	#		for n in new_photos:
+	#			if n.endswith(('jpg', 'png', 'gif')):
+	#				copyfile(f"{PATHS_TO_NEW_IMAGES}/{n}", f"{PHOTOS_FOLDER}/{n}")
+	#	except:
+	#		messagebox.showerror(title = TITLE_ERROR, message = CANT_ADD_IMAGES)
+
 
 	# Зчитати кадр з відео		
 	def get_frame(self):
@@ -137,12 +157,14 @@ class App():
 				ret, frame = self.cap.read()
 				return (ret, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 		except:
-			messagebox.showerror(title = TITLE_ERROR, message = CANT_LAUNCH)					
+			#messagebox.showerror(title = TITLE_ERROR, message = CANT_LAUNCH)
+			self.error.show(message = CANT_LAUNCH)					
 
 	def launch_video(self):
 		try:
 			if self.selected_video is None:
-				messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
+				self.error.show(message = NOT_SELECTED)
+				#messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
 				return				
 			self.launch = True
 
@@ -162,7 +184,8 @@ class App():
 		if self.pause == True:
 			pass
 		if self.selected_video is None:
-			messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
+			self.error.show(message = NOT_SELECTED)
+			#messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
 
 		self.pause = True
 
@@ -172,7 +195,8 @@ class App():
 
 	def take_a_snapshot(self):
 		if self.selected_video is None or self.launch == False:
-			messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
+			self.error.show(message = NOT_SELECTED)
+			#messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
 			return
 
 		ret, frame = self.get_frame()	
