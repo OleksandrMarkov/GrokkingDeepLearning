@@ -1,8 +1,9 @@
 import os, shutil
-
+from shutil import copyfile, ignore_patterns
 from package.constants import *
-
 from tkinter import filedialog
+
+import subprocess # для виявлення флешки
 
 class Helper:
 	def remove_old_snapshots(self, snapshots_folder):
@@ -18,7 +19,6 @@ class Helper:
 			initialdir = VIDEOS_FOLDER,
 			filetypes = VIDEOTYPES)
 
-	import subprocess # для виявлення флешки
 	def get_path_to_new_collection(self):
 		path = None
 		out = subprocess.check_output(DISKS_CAPTIONS, shell = True)
@@ -28,12 +28,23 @@ class Helper:
 				if drive_letter not in PC_DISKS:
 					path = 	f"{drive_letter}:/{IMAGES_FOLDER_ON_USB_FLASH_DRIVE}"
 					break
+		#print(path) # F:/photos 			
 		return path
-
-	def get_new_collection(self, path):
-		return os.listdir(path)	
 		
-	def move_images(self, collection, path):
+	def move_images(self, path):
+		print(path)
+		collection = os.listdir(path)
 		for img in collection:
-			if img.endswith(IMAGE_ENDS_WITH):
-				copyfile(f"{path}/{n}", f"{PHOTOS_FOLDER}/{n}")	
+			#print(f"{path}/{img}")
+			if img.endswith(('jpg', 'png', 'gif')):
+				copyfile(f"{path}/{img}", f"{FULL_PATH_TO_PHOTOS_FOLDER}/{img}")
+
+	def crop_images_from_the_collection():
+		for (root, dirs, images) in os.walk(PHOTOS_FOLDER):
+			for image_name in images:
+				if (".jpg" in img_name or ".png" in img_name or ".gif" in img_name) and (PROCESSED_PHOTOS_FOLDER not in os.path.join(root, img_name).replace("\\", "/")):
+					pass
+					#try:
+					#	img = cv2.imread(os.path.join(root, img_name).replace("\\", "/"))
+					#	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+						#faces = 							

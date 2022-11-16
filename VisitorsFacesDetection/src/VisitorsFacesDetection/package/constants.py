@@ -14,6 +14,7 @@ VIDEOS_FOLDER = "dataset/videos"
 
 #PHOTOS_FOLDER = "C:/Users/ALEX/Documents/grokkingDeepLearning/VisitorsFacesDetection/dataset/photos"
 PHOTOS_FOLDER = "dataset/photos"
+FULL_PATH_TO_PHOTOS_FOLDER = "C:/Users/ALEX/Documents/grokkingDeepLearning/VisitorsFacesDetection/src/VisitorsFacesDetection/dataset/photos"
 
 #SNAPSHOTS_FOLDER = "C:/Users/ALEX/Documents/grokkingDeepLearning/VisitorsFacesDetection/screenshots"
 SNAPSHOTS_FOLDER = "screenshots" 
@@ -54,7 +55,8 @@ TITLE_ERROR = "Виникла помилка!"
 NOT_SELECTED = 'Відеофайл не відтворюється або не обраний!'
 CANT_LAUNCH = "Неможливо відтворити відеофайл!"
 #CANT_STOP = "Відео не запущено!"
-CANT_ADD_IMAGES = "Спочатку вставте накопичувач з папкою \"photos\"" 
+CANT_ADD_IMAGES = "Спочатку вставте накопичувач з папкою \"photos\";"\
++ "\nТакож перевірте розташування цільвої директорії для колекції" 
 
 CANT_DISPLAY_VIDEO = "Розмір відео завеликий!"
 

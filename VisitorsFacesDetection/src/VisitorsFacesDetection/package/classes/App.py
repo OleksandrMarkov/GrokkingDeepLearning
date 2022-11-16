@@ -1,8 +1,8 @@
 from tkinter import *
-from tkinter import messagebox
+#from tkinter import messagebox
 from package.constants import *
 from tkinter import filedialog
-from shutil import copyfile, ignore_patterns
+#from shutil import copyfile, ignore_patterns
 
 from package.classes.Helper import *
 from package.classes.Alerts import *
@@ -125,30 +125,12 @@ class App():
 
 	def update_photo_collection(self):
 		path_to_new_collection = self.helper.get_path_to_new_collection()
+
 		if path_to_new_collection is not None:
 			try:
-				new_collection = self.helper.get_new_collection(path_to_new_images)
-				self.helper.move_images(new_collection, path_to_new_collection)
+				self.helper.move_images(path_to_new_collection)
 			except:
 				self.error.show(message = CANT_ADD_IMAGES)
-
-	#def update_photo_collection(self):
-	#	out = subprocess.check_output(DISKS_CAPTIONS, shell = True) 
-	#	PATHS_TO_NEW_IMAGES = ""
-	#	for drive in str(out).strip().split('\\r\\r\\n'):
-	#		if '2' in drive:
-	#			drive_letter = drive.split(':')[0]
-	#			if drive_letter not in ('C', 'D'): # Флешку вставлено?
-	#				PATHS_TO_NEW_IMAGES = f"{drive_letter}:/photos"
-	#				break
-	#	try: 
-	#		new_photos = os.listdir(PATHS_TO_NEW_IMAGES)
-	#		for n in new_photos:
-	#			if n.endswith(('jpg', 'png', 'gif')):
-	#				copyfile(f"{PATHS_TO_NEW_IMAGES}/{n}", f"{PHOTOS_FOLDER}/{n}")
-	#	except:
-	#		messagebox.showerror(title = TITLE_ERROR, message = CANT_ADD_IMAGES)
-
 
 	# Зчитати кадр з відео		
 	def get_frame(self):
@@ -206,7 +188,15 @@ class App():
 			
 
 	def recognize_faces(self):
-		pass
+		if self.selected_video is None:
+			self.error.show(message = NOT_SELECTED)
+		else:
+			pass
+			# CROP IMAGES -> CV2GRAY -> ENCODINGS
+
+			# FRAMES CYCLE : LOCATIONS/ENCODINGS -> COMPARING
+			
+			#self.helper.crop_images_from_the_collection()
 
 	def __del__(self):
 		try:
