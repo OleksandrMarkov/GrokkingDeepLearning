@@ -1,5 +1,5 @@
 from tkinter import messagebox
-
+from package.constants import *
 
 class Error:
 	def show(self, message):
