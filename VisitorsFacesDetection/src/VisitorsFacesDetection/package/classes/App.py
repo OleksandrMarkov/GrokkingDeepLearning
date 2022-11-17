@@ -131,7 +131,9 @@ class App():
 				self.helper.move_images(path_to_new_collection)
 			except:
 				self.error.show(message = CANT_ADD_IMAGES)
-
+		else:
+			self.error.show(message = CANT_ADD_IMAGES)		
+				
 	# Зчитати кадр з відео		
 	def get_frame(self):
 		try:
@@ -186,12 +188,14 @@ class App():
 			#cv2.imwrite(os.path.join(SNAPSHOTS_FOLDER, "frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg"), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 			cv2.imwrite(os.path.join(SNAPSHOTS_FOLDER, "frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg"), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 			
+	#def crop_images(self):
 
+			
 	def recognize_faces(self):
 		if self.selected_video is None:
 			self.error.show(message = NOT_SELECTED)
 		else:
-			pass
+			self.helper.crop_images_from_the_collection()
 			# CROP IMAGES -> CV2GRAY -> ENCODINGS
 
 			# FRAMES CYCLE : LOCATIONS/ENCODINGS -> COMPARING

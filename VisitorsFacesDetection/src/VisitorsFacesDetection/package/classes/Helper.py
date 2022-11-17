@@ -2,6 +2,7 @@ import os, shutil
 from shutil import copyfile, ignore_patterns
 from package.constants import *
 from tkinter import filedialog
+from package.classes.Image import *
 
 import subprocess # для виявлення флешки
 
@@ -39,12 +40,25 @@ class Helper:
 			if img.endswith(('jpg', 'png', 'gif')):
 				copyfile(f"{path}/{img}", f"{FULL_PATH_TO_PHOTOS_FOLDER}/{img}")
 
-	def crop_images_from_the_collection():
+
+	def crop_images_from_the_collection(self):
 		for (root, dirs, images) in os.walk(PHOTOS_FOLDER):
 			for image_name in images:
-				if (".jpg" in img_name or ".png" in img_name or ".gif" in img_name) and (PROCESSED_PHOTOS_FOLDER not in os.path.join(root, img_name).replace("\\", "/")):
-					pass
+				if (".jpg" in image_name or ".png" in image_name or ".gif" in image_name) and (PROCESSED_PHOTOS_FOLDER not in os.path.join(root, image_name).replace("\\", "/")):
+					try:
+						#print(image_name) # Agosto_01918_2.png
+						path = os.path.join(root, image_name).replace("\\", "/")
+						#print(path) # dataset/photos/michael_jackson/Agosto_01918_2.png
+						
+						img = Image(path)
+						#img.test()
+
+						img.crop_face()
+						print("+1")	
+					except Exception as e:
+						print('cant crop')
+						print(e)
 					#try:
-					#	img = cv2.imread(os.path.join(root, img_name).replace("\\", "/"))
+					#	img = cv2.imread(os.path.join(root, image_name).replace("\\", "/"))
 					#	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 						#faces = 							
