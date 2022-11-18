@@ -29,7 +29,7 @@ class App():
 		self.window.resizable(False, False)
 
 		self.launch = False 
-		self.selected_video = None 
+		self.selected_video, self.tmp = None, None 
 
 		# Блок для обраного відео
 		top_frame = Frame(self.window)
@@ -105,10 +105,15 @@ class App():
 
 	# Відкрити відеозапис	
 	def open_video(self):
-		self.pause = False
-		
+
+		# якщо відео вже обрано
+		if self.selected_video is not None:
+			self.pause = False
+			self.tmp = self.selected_video
+
 		self.selected_video = self.helper.get_videofile()
 
+		# якщо відео обрали
 		if self.selected_video:
 			self.helper.remove_old_snapshots(SNAPSHOTS_FOLDER)
 
@@ -121,7 +126,12 @@ class App():
 				#messagebox.showerror(title = TITLE_ERROR, message = CANT_DISPLAY_VIDEO)
 				self.error.show(message = CANT_DISPLAY_VIDEO)
 		else:
-			self.selected_video = None
+			if self.tmp is not None:
+				self.selected_video = self.tmp	
+			else:
+				self.selected_video = None
+		#self.selected_video = None
+
 
 	def update_photo_collection(self):
 		path_to_new_collection = self.helper.get_path_to_new_collection()
@@ -185,17 +195,15 @@ class App():
 
 		ret, frame = self.get_frame()	
 		if ret:
-			#cv2.imwrite(os.path.join(SNAPSHOTS_FOLDER, "frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg"), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 			cv2.imwrite(os.path.join(SNAPSHOTS_FOLDER, "frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg"), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
-			
-	#def crop_images(self):
-
 			
 	def recognize_faces(self):
 		if self.selected_video is None:
 			self.error.show(message = NOT_SELECTED)
 		else:
+			#messagebox.showinfo(message = f"{self.selected_video}")
 			self.helper.crop_images_from_the_collection()
+			messagebox.showinfo(message = "Обличчя з фото оброблені та збережені!")
 			# CROP IMAGES -> CV2GRAY -> ENCODINGS
 
 			# FRAMES CYCLE : LOCATIONS/ENCODINGS -> COMPARING
