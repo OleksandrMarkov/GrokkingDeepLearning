@@ -45,20 +45,14 @@ class Helper:
 		for (root, dirs, images) in os.walk(PHOTOS_FOLDER):
 			for image_name in images:
 				if (".jpg" in image_name or ".png" in image_name or ".gif" in image_name) and (PROCESSED_PHOTOS_FOLDER not in os.path.join(root, image_name).replace("\\", "/")):
-					try:
-						#print(image_name) # Agosto_01918_2.png
+					try:	
 						path = os.path.join(root, image_name).replace("\\", "/")
 						#print(path) # dataset/photos/michael_jackson/Agosto_01918_2.png
 						
 						img = Image(path)
 						#img.test()
-
 						img.crop_face()
-						print("+1")	
+							
 					except Exception as e:
-						print('cant crop')
+						#print('cant crop')
 						print(e)
-					#try:
-					#	img = cv2.imread(os.path.join(root, image_name).replace("\\", "/"))
-					#	gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-						#faces = 							

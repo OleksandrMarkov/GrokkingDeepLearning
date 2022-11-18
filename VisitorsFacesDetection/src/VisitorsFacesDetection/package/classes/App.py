@@ -1,6 +1,6 @@
 from tkinter import *
 #from tkinter import messagebox
-from package.constants import *
+
 from tkinter import filedialog
 #from shutil import copyfile, ignore_patterns
 
@@ -9,7 +9,7 @@ from package.classes.Alerts import *
 
 import PIL.Image, PIL.ImageTk
 import cv2
-import face_recognition  #pip install dlib & pip install face-recognition 
+ 
 
 import os, shutil
 
@@ -200,7 +200,6 @@ class App():
 
 			# FRAMES CYCLE : LOCATIONS/ENCODINGS -> COMPARING
 			
-			#self.helper.crop_images_from_the_collection()
 
 	def __del__(self):
 		try:
