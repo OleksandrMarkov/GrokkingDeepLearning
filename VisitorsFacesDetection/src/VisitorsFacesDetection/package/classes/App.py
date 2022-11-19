@@ -6,6 +6,7 @@ from tkinter import filedialog
 
 from package.classes.Helper import *
 from package.classes.Alerts import *
+from package.classes.Video import *
 
 import PIL.Image, PIL.ImageTk
 import cv2
@@ -88,8 +89,6 @@ class App():
 		canvas_width, canvas_height = self.get_frame_size(selected_video)
 
 		if MAX_FRAME_WIDTH >= canvas_width > 0 and MAX_FRAME_HEIGHT >= canvas_height > 0:
-			#print(canvas_width)
-			#print(canvas_height)
 			return True
 		return False	
 	
@@ -115,7 +114,7 @@ class App():
 
 		# якщо відео обрали
 		if self.selected_video:
-			self.helper.remove_old_snapshots(SNAPSHOTS_FOLDER)
+			self.helper.remove_old_snapshots(SNAPSHOTS)
 
 			# configure the canvas			
 			if self.frames_are_of_acceptable_size(self.selected_video):
@@ -147,7 +146,7 @@ class App():
 	# Зчитати кадр з відео		
 	def get_frame(self):
 		try:
-			if self.cap.isOpened():
+			if self.cap.isOpened() and self.launch:
 				ret, frame = self.cap.read()
 				return (ret, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 		except:
@@ -181,6 +180,7 @@ class App():
 			self.error.show(message = NOT_SELECTED)
 			#messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
 
+		self.launch = False	
 		self.pause = True
 
 	def relaunch_video(self):
@@ -195,7 +195,7 @@ class App():
 
 		ret, frame = self.get_frame()	
 		if ret:
-			cv2.imwrite(os.path.join(SNAPSHOTS_FOLDER, "frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg"), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+			cv2.imwrite(os.path.join(SNAPSHOTS, "frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg"), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 			
 	def recognize_faces(self):
 		if self.selected_video is None:
@@ -204,8 +204,12 @@ class App():
 			#messagebox.showinfo(message = f"{self.selected_video}")
 			self.helper.crop_images_from_the_collection()
 			messagebox.showinfo(message = "Обличчя з фото оброблені та збережені!")
+			
+			video = Video(self.selected_video)
+			self.helper.iterate_processed_images(video)
+			self.helper.send_report()
+			
 			# CROP IMAGES -> CV2GRAY -> ENCODINGS
-
 			# FRAMES CYCLE : LOCATIONS/ENCODINGS -> COMPARING
 			
 

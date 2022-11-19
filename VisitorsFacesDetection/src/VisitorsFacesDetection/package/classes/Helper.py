@@ -3,6 +3,7 @@ from shutil import copyfile, ignore_patterns
 from package.constants import *
 from tkinter import filedialog
 from package.classes.Image import *
+from package.classes.ProcessedImage import *
 
 import subprocess # для виявлення флешки
 
@@ -36,7 +37,6 @@ class Helper:
 		print(path)
 		collection = os.listdir(path)
 		for img in collection:
-			#print(f"{path}/{img}")
 			if img.endswith(('jpg', 'png', 'gif')):
 				copyfile(f"{path}/{img}", f"{FULL_PATH_TO_PHOTOS_FOLDER}/{img}")
 
@@ -54,5 +54,29 @@ class Helper:
 						img.crop_face()
 							
 					except Exception as e:
-						#print('cant crop')
-						print(e)
+						pass
+
+	def iterate_processed_images(self, video):			
+		for (root, dirs, images) in os.walk(PROCESSED_PHOTOS_FOLDER):
+			for image_name in images:
+				# dataset/photos/processed photos/will_smith.png
+				try:
+					path = os.path.join(root, image_name).replace("\\", "/")
+					image = ProcessedImage(path)
+					image_encodings = image.get_encodings()
+					
+					print("Recognition")
+					if video.catch_matches(image_encodings) == True:
+						print(image_name)
+						self.add_person_to_report()
+
+				except Exception as e:
+					print("no face")
+					#print(e)
+					#break		
+
+	def add_person_to_report(self):
+		pass
+
+	def send_report(self):
+		pass				

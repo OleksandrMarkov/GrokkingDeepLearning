@@ -5,7 +5,7 @@ from package.constants import *
 
 class Image:
 	def __init__(self, path):
-		self.path = path.split(f"{PHOTOS_FOLDER}/")[1]
+		self.path = path.split(f"{PHOTOS_FOLDER}/")[1] # name like 1.png
 		self.img = cv2.imread(path) 	
 		self.face_cascade = cv2.CascadeClassifier(FACE_RECOG_MODEL)
 
@@ -21,7 +21,7 @@ class Image:
 			
 			self.img = self.img[y:y + h, x:x + w]
 			path_to_cropped_img = f"{PROCESSED_PHOTOS_FOLDER}/{self.path}"
-			print(path_to_cropped_img) # dataset/photos/processed photos/petrov2.jpg
+			#print(path_to_cropped_img) # dataset/photos/processed photos/petrov2.jpg
 
 			cv2.imwrite(path_to_cropped_img, self.img)
 
