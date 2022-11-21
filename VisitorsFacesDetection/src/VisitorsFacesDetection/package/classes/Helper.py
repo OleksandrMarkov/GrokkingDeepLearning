@@ -6,15 +6,24 @@ from package.classes.Image import *
 from package.classes.ProcessedImage import *
 
 import subprocess # для виявлення флешки
+import time
 
 class Helper:
-	def remove_old_snapshots(self, snapshots_folder):
-		for files in os.listdir(snapshots_folder):
-			full_path = os.path.join(snapshots_folder, files)
+	def remove_old_snapshots(self):
+		for files in os.listdir(SNAPSHOTS):
+			full_path = os.path.join(SNAPSHOTS, files)
 			try:
 				shutil.rmtree(full_path)
 			except OSError:
 				os.remove(full_path)
+
+	def remove_old_processed_photos(self):
+		for files in os.listdir(PROCESSED_PHOTOS_FOLDER):
+			full_path = os.path.join(PROCESSED_PHOTOS_FOLDER, files)
+			try:
+				shutil.rmtree(full_path)
+			except OSError:
+				os.remove(full_path)		
 
 	def get_videofile(self):
 		return filedialog.askopenfilename(title = SELECT_VIDEO,
@@ -56,24 +65,31 @@ class Helper:
 					except Exception as e:
 						pass
 
-	def iterate_processed_images(self, video):			
+	def iterate_processed_images(self, video):
+		images_dict = {}			
 		for (root, dirs, images) in os.walk(PROCESSED_PHOTOS_FOLDER):
 			for image_name in images:
 				# dataset/photos/processed photos/will_smith.png
-				try:
-					path = os.path.join(root, image_name).replace("\\", "/")
-					image = ProcessedImage(path)
-					image_encodings = image.get_encodings()
-					
-					print("Recognition")
-					if video.catch_matches(image_encodings) == True:
-						print(image_name)
-						self.add_person_to_report()
+				
+				path = os.path.join(root, image_name).replace("\\", "/")
+				#print(path)
+				
+				image = ProcessedImage(path)
+				image_encodings = image.get_encodings()
 
-				except Exception as e:
-					print("no face")
-					#print(e)
-					#break		
+				images_dict[image] = [].append(image_encodings)
+
+				
+				
+				#if image_encodings is not None:
+				#	print(path)
+				
+				#if video.catch_matches(image_encodings) == True:
+						#print(image_name)
+						#self.add_person_to_report()
+		print(len(images_dict))				
+		print("All faces are checked!")
+
 
 	def add_person_to_report(self):
 		pass
