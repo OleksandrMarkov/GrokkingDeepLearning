@@ -1,4 +1,6 @@
 from tkinter import *
+from tkinter import ttk
+
 #from tkinter import messagebox
 
 from tkinter import filedialog
@@ -12,9 +14,7 @@ import PIL.Image, PIL.ImageTk
 import cv2
  
 
-import os, shutil
-
-import time
+import os, shutil, time
 
 class App():
 	def __init__(self, window):
@@ -61,7 +61,7 @@ class App():
 		self.btn_update_photo_collection.grid(row = 0, column = 2, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		# Кнопка "Довідка"
-		self.btn_open_FAQ = Button(btn_frame, text = FAQ, width = BTN_W)
+		self.btn_open_FAQ = Button(btn_frame, text = FAQ, width = BTN_W, command = self.read_FAQ)
 		self.btn_open_FAQ.grid(row = 0, column = 3, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		# Кнопка "Запуск"
@@ -81,9 +81,9 @@ class App():
 		self.btn_take_a_snapshot.grid(row = 1, column = 3, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		self.delay = 15   # ms
-		self.window.mainloop()
 
-
+		self.window.mainloop()			
+		
 	def frames_are_of_acceptable_size(self, selected_video):
 		self.cap = cv2.VideoCapture(selected_video) 
 		canvas_width, canvas_height = self.get_frame_size(selected_video)
@@ -102,6 +102,21 @@ class App():
 		return canvas.config(width = self.get_frame_size(selected_video)[0],
 			height = self.get_frame_size(selected_video)[1])
 
+	def read_FAQ(self):
+		faq = Toplevel()
+		faq.geometry("645x350")
+		faq.title("Довідка")
+		
+		faq_label1 = ttk.Label(faq, text=FAQ_STEP1, background="#FFCDD2", foreground="#B71C1C", font=("Arial", 12), padding=3)
+		faq_label2 = ttk.Label(faq, text=FAQ_STEP2, background="#D9FFBA", foreground="#62B71C", font=("Arial", 12), padding=3)
+		faq_label3 = ttk.Label(faq, text=FAQ_STEP3, background="#9CBFF7", foreground="#2B1CB7", font=("Arial", 12), padding=3)
+		faq_label4 = ttk.Label(faq, text=FAQ_STEP4, background="#C277ED", foreground="#791AB0", font=("Arial", 12), padding=3)
+		
+		faq_label1.pack(fill=BOTH, expand=True)
+		faq_label2.pack(fill=BOTH, expand=True)
+		faq_label3.pack(fill=BOTH, expand=True)
+		faq_label4.pack(fill=BOTH, expand=True)
+
 	# Відкрити відеозапис	
 	def open_video(self):
 
@@ -114,7 +129,7 @@ class App():
 
 		# якщо відео обрали
 		if self.selected_video:
-			self.helper.remove_old_snapshots(SNAPSHOTS)
+			self.helper.remove_old_snapshots()
 
 			# configure the canvas			
 			if self.frames_are_of_acceptable_size(self.selected_video):
@@ -201,13 +216,15 @@ class App():
 		if self.selected_video is None:
 			self.error.show(message = NOT_SELECTED)
 		else:
+			self.helper.remove_old_processed_photos()
+
 			#messagebox.showinfo(message = f"{self.selected_video}")
 			self.helper.crop_images_from_the_collection()
 			messagebox.showinfo(message = "Обличчя з фото оброблені та збережені!")
 			
 			video = Video(self.selected_video)
 			self.helper.iterate_processed_images(video)
-			self.helper.send_report()
+			#self.helper.send_report()
 			
 			# CROP IMAGES -> CV2GRAY -> ENCODINGS
 			# FRAMES CYCLE : LOCATIONS/ENCODINGS -> COMPARING
@@ -217,5 +234,6 @@ class App():
 		try:
 			if self.cap.isOpened():
 				self.cap.release()
+				cv2.destroyAllWindows()
 		except:
 			pass			
