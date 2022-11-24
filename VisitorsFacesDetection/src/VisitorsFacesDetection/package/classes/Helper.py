@@ -57,7 +57,6 @@ class Helper:
 				if (".jpg" in image_name or ".png" in image_name or ".gif" in image_name) and (PROCESSED_PHOTOS_FOLDER not in os.path.join(root, image_name).replace("\\", "/")):
 					try:	
 						path = os.path.join(root, image_name).replace("\\", "/")
-						#print(path) # dataset/photos/michael_jackson/Agosto_01918_2.png
 						
 						img = Image(path)
 						#img.test()
@@ -79,40 +78,14 @@ class Helper:
 				image_encodings = image.get_encodings()
 
 				images_dict[image] = image_encodings
-
-				#if image_encodings is not None:
-				#	print(path)
-				#if video.catch_matches(image_encodings) == True:
-						#print(image_name)
-						#self.add_person_to_report()
 		
 		print(len(images_dict))				
 		print("All faces are checked!")
 
-		#video.capture_matches(images_dict)
-		captured_visitors = video.capture_matches(images_dict)
-		snapshots_amount = self.get_amount_of_snapshots()
-
-		report = Report(captured_visitors, snapshots_amount)
-		#if self.no_visitors(captured_visitors) == True:
-		#	self.info = Info()
-		#	self.info.show(message = NO_VISITORS)
-		#else:
-		#	for visitor in captured_visitors:
-		#		print(visitor.path)
-
-	def get_amount_of_snapshots(self):
-		return len([entry for entry in os.listdir(SNAPSHOTS)\
-		 if os.path.isfile(os.path.join(SNAPSHOTS, entry))])
-				
-
-	def no_visitors(self, visitors):
-		if len(visitors) == 0:
-			return True
-		return False	
+		captured_visitors = video.get_capture_matches(images_dict)
 		
-	def add_person_to_report(self):
-		pass
+		#snapshots_amount = self.get_amount_of_snapshots()
 
-	def send_report(self):
-		pass				
+		report = Report(captured_visitors)
+		report.send()
+						

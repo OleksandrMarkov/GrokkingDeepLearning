@@ -134,18 +134,16 @@ class App():
 			# configure the canvas			
 			if self.frames_are_of_acceptable_size(self.selected_video):
 				self.info.show(message = LAUNCH)
-				#messagebox.showinfo(message = LAUNCH)
+
 				self.configure_the_canvas(self.canvas, self.selected_video)
 			else:
-				#messagebox.showerror(title = TITLE_ERROR, message = CANT_DISPLAY_VIDEO)
+
 				self.error.show(message = CANT_DISPLAY_VIDEO)
 		else:
 			if self.tmp is not None:
 				self.selected_video = self.tmp	
 			else:
 				self.selected_video = None
-		#self.selected_video = None
-
 
 	def update_photo_collection(self):
 		path_to_new_collection = self.helper.get_path_to_new_collection()
@@ -165,14 +163,14 @@ class App():
 				ret, frame = self.cap.read()
 				return (ret, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 		except:
-			#messagebox.showerror(title = TITLE_ERROR, message = CANT_LAUNCH)
+
 			self.error.show(message = CANT_LAUNCH)					
 
 	def launch_video(self):
 		try:
 			if self.selected_video is None:
 				self.error.show(message = NOT_SELECTED)
-				#messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
+
 				return
 			self.tmp = self.selected_video					
 			self.launch = True
@@ -194,7 +192,7 @@ class App():
 			pass
 		if self.selected_video is None:
 			self.error.show(message = NOT_SELECTED)
-			#messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
+
 
 		self.launch = False	
 		self.pause = True
@@ -206,7 +204,7 @@ class App():
 	def take_a_snapshot(self):
 		if self.selected_video is None or self.launch == False:
 			self.error.show(message = NOT_SELECTED)
-			#messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
+
 			return
 
 		ret, frame = self.get_frame()	
@@ -214,25 +212,21 @@ class App():
 			cv2.imwrite(os.path.join(SNAPSHOTS, "frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg"), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 			
 	def recognize_faces(self):
-		#messagebox.showinfo(self.helper.get_amount_of_snapshots())
 
 		if self.selected_video is None:
 			self.error.show(message = NOT_SELECTED)
 		else:
 			self.helper.remove_old_processed_photos()
 
-			#messagebox.showinfo(message = f"{self.selected_video}")
 			self.helper.crop_images_from_the_collection()
 			messagebox.showinfo(message = "Обличчя з фото оброблені та збережені!")
 			
 			video = Video(self.selected_video)
 			self.helper.iterate_processed_images(video)
-			#self.helper.send_report()
 			
 			# CROP IMAGES -> CV2GRAY -> ENCODINGS
 			# FRAMES CYCLE : LOCATIONS/ENCODINGS -> COMPARING
 			
-
 	def __del__(self):
 		try:
 			if self.cap.isOpened():
