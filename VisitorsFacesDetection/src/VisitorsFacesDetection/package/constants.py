@@ -1,4 +1,4 @@
-WINDOW_TITLE = "Face recognition in videos"
+WINDOW_TITLE = "Розпізнавання облич на відео"
 WINDOW_BACKGROUND = "#f2dbff"
 ICON = "ico/icon.ico"
 
@@ -17,7 +17,9 @@ PHOTOS_FOLDER = "dataset/photos"
 FULL_PATH_TO_PHOTOS_FOLDER = "C:/Users/ALEX/Documents/grokkingDeepLearning/VisitorsFacesDetection/src/VisitorsFacesDetection/dataset/photos"
 
 #SNAPSHOTS_FOLDER = "C:/Users/ALEX/Documents/grokkingDeepLearning/VisitorsFacesDetection/screenshots"
-SNAPSHOTS_FOLDER = "screenshots" 
+
+SNAPSHOTS = "snapshots"
+
 
 PROCESSED_PHOTOS_FOLDER = "dataset/photos/processed photos"
 
@@ -57,14 +59,21 @@ CANT_LAUNCH = "Неможливо відтворити відеофайл!"
 #CANT_STOP = "Відео не запущено!"
 CANT_ADD_IMAGES = "Спочатку вставте накопичувач з папкою \"photos\";"\
 + "\nТакож перевірте розташування цільвої директорії для колекції" 
-
 CANT_DISPLAY_VIDEO = "Розмір відео завеликий!"
+NO_VISITORS = "Визначених в колекції зображень користувачів на відео не зафіксовано!"
+
+
+FAQ_STEP1 = "Оновіть колекцію зображень, вставивши накопичувач з колекцією в папці \"photos\""
+FAQ_STEP2 = "Оберіть відеозапис для перегляду та дослідження"
+FAQ_STEP3 = "Виконайте запуск, ставте відео на паузу, робіть скріншоти"
+FAQ_STEP4 = "Здійснюйте розпізнавання; результати будуть надіслані повідомленням в Telegram"
+
 
 # Labels on buttons
 SELECT_VIDEO = "Вибрати відеозапис"
-START_RECOGNITION = "Почати розпізнавання"
+START_RECOGNITION = "Виконати розпізнавання"
 NEW_IMAGES = "Додати нові фото"
-FAQ = "FAQ"
+FAQ = "Довідка"
 PLAY = "Запуск відео"
 PAUSE = "Пауза"
 RELAUNCH = "Продовжити"
