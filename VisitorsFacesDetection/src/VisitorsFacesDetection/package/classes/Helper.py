@@ -2,6 +2,7 @@ import os, shutil
 from shutil import copyfile, ignore_patterns
 from package.constants import *
 from tkinter import filedialog
+from package.classes.Alerts import *
 from package.classes.Image import *
 from package.classes.ProcessedImage import *
 
@@ -77,20 +78,39 @@ class Helper:
 				image = ProcessedImage(path)
 				image_encodings = image.get_encodings()
 
-				images_dict[image] = [].append(image_encodings)
+				images_dict[image] = image_encodings
 
-				
-				
 				#if image_encodings is not None:
 				#	print(path)
-				
 				#if video.catch_matches(image_encodings) == True:
 						#print(image_name)
 						#self.add_person_to_report()
+		
 		print(len(images_dict))				
 		print("All faces are checked!")
 
+		#video.capture_matches(images_dict)
+		captured_visitors = video.capture_matches(images_dict)
+		snapshots_amount = self.get_amount_of_snapshots()
 
+		report = Report(captured_visitors, snapshots_amount)
+		#if self.no_visitors(captured_visitors) == True:
+		#	self.info = Info()
+		#	self.info.show(message = NO_VISITORS)
+		#else:
+		#	for visitor in captured_visitors:
+		#		print(visitor.path)
+
+	def get_amount_of_snapshots(self):
+		return len([entry for entry in os.listdir(SNAPSHOTS)\
+		 if os.path.isfile(os.path.join(SNAPSHOTS, entry))])
+				
+
+	def no_visitors(self, visitors):
+		if len(visitors) == 0:
+			return True
+		return False	
+		
 	def add_person_to_report(self):
 		pass
 

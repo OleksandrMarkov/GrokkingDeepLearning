@@ -173,7 +173,8 @@ class App():
 			if self.selected_video is None:
 				self.error.show(message = NOT_SELECTED)
 				#messagebox.showerror(title = TITLE_ERROR, message = NOT_SELECTED)
-				return				
+				return
+			self.tmp = self.selected_video					
 			self.launch = True
 
 			# Зчитування кадрів з відео
@@ -213,6 +214,8 @@ class App():
 			cv2.imwrite(os.path.join(SNAPSHOTS, "frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg"), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 			
 	def recognize_faces(self):
+		#messagebox.showinfo(self.helper.get_amount_of_snapshots())
+
 		if self.selected_video is None:
 			self.error.show(message = NOT_SELECTED)
 		else:
