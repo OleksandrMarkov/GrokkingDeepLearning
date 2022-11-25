@@ -1,20 +1,10 @@
 from tkinter import *
 from tkinter import ttk
-
-#from tkinter import messagebox
-
-from tkinter import filedialog
-#from shutil import copyfile, ignore_patterns
-
 from package.classes.Helper import *
 from package.classes.Alerts import *
 from package.classes.Video import *
-
 import PIL.Image, PIL.ImageTk
-import cv2
- 
-
-import os, shutil, time
+import cv2, os, time
 
 class App():
 	def __init__(self, window):
@@ -25,7 +15,6 @@ class App():
 
 		self.window = window
 		self.window.title(WINDOW_TITLE)
-
 		self.window.iconbitmap(ICON)
 		self.window.resizable(False, False)
 
@@ -34,7 +23,6 @@ class App():
 
 		# Блок для обраного відео
 		top_frame = Frame(self.window)
-		#top_frame.pack_propagate(False)
 
 		top_frame.pack(side = TOP, pady = 10)
 
@@ -49,35 +37,35 @@ class App():
 		self.canvas.pack()
 
 		# Кнопка "Відеозапис"
-		self.btn_select_video = Button(btn_frame, text = SELECT_VIDEO, width = BTN_W, command = self.open_video)
+		self.btn_select_video = Button(btn_frame, text = SELECT_VIDEO_LBL, width = BTN_W, command = self.open_video)
 		self.btn_select_video.grid(row = 0, column = 0, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		# Кнопка "Розпізнавання"
-		self.btn_recognize_faces = Button(btn_frame, text = START_RECOGNITION, width = BTN_W, command = self.recognize_faces)
+		self.btn_recognize_faces = Button(btn_frame, text = RECOGNIZE_FACES_MSG, width = BTN_W, command = self.recognize_faces)
 		self.btn_recognize_faces.grid(row = 0, column = 1, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		# Кнопка "Оновити колекцію зображень"
-		self.btn_update_photo_collection = Button(btn_frame, text = NEW_IMAGES, width = BTN_W, command = self.update_photo_collection)
+		self.btn_update_photo_collection = Button(btn_frame, text = ADD_NEW_IMAGES_LBL, width = BTN_W, command = self.update_photo_collection)
 		self.btn_update_photo_collection.grid(row = 0, column = 2, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		# Кнопка "Довідка"
-		self.btn_open_FAQ = Button(btn_frame, text = FAQ, width = BTN_W, command = self.read_FAQ)
+		self.btn_open_FAQ = Button(btn_frame, text = FAQ_LBL, width = BTN_W, command = self.read_FAQ)
 		self.btn_open_FAQ.grid(row = 0, column = 3, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		# Кнопка "Запуск"
-		self.btn_launch_video = Button(btn_frame, text = PLAY, width = BTN_W, command = self.launch_video)
+		self.btn_launch_video = Button(btn_frame, text = LAUNCH_VIDEO_LBL, width = BTN_W, command = self.launch_video)
 		self.btn_launch_video.grid(row = 1, column = 0, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		# Кнопка "Пауза"
-		self.btn_pause_video = Button(btn_frame, text = PAUSE, width = BTN_W, command = self.pause_video)
+		self.btn_pause_video = Button(btn_frame, text = PAUSE_VIDEO_LBL, width = BTN_W, command = self.pause_video)
 		self.btn_pause_video.grid(row = 1, column = 1, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		# Кнопка "Поновити"
-		self.btn_relaunch_video = Button(btn_frame, text = RELAUNCH, width = BTN_W, command = self.relaunch_video)
+		self.btn_relaunch_video = Button(btn_frame, text = RELAUNCH_LBL, width = BTN_W, command = self.relaunch_video)
 		self.btn_relaunch_video.grid(row = 1, column = 2, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		# Кнопка "Скріншот"
-		self.btn_take_a_snapshot = Button(btn_frame, text = SNAPSHOT, width = BTN_W, command = self.take_a_snapshot)
+		self.btn_take_a_snapshot = Button(btn_frame, text = TAKE_A_SNAPSHOT_LBL, width = BTN_W, command = self.take_a_snapshot)
 		self.btn_take_a_snapshot.grid(row = 1, column = 3, ipadx = 6, ipady = 6, padx = 5, pady = 5)
 
 		self.delay = 15   # ms
@@ -133,12 +121,11 @@ class App():
 
 			# configure the canvas			
 			if self.frames_are_of_acceptable_size(self.selected_video):
-				self.info.show(message = LAUNCH)
-
+				self.info.show(message = MAY_LAUNCH_MSG)
 				self.configure_the_canvas(self.canvas, self.selected_video)
 			else:
 
-				self.error.show(message = CANT_DISPLAY_VIDEO)
+				self.error.show(message = CANT_DISPLAY_VIDEO_MSG)
 		else:
 			if self.tmp is not None:
 				self.selected_video = self.tmp	
@@ -152,9 +139,9 @@ class App():
 			try:
 				self.helper.move_images(path_to_new_collection)
 			except:
-				self.error.show(message = CANT_ADD_IMAGES)
+				self.error.show(message = CANT_ADD_IMAGES_MSG)
 		else:
-			self.error.show(message = CANT_ADD_IMAGES)		
+			self.error.show(message = CANT_ADD_IMAGES_MSG)		
 				
 	# Зчитати кадр з відео		
 	def get_frame(self):
@@ -164,14 +151,14 @@ class App():
 				return (ret, cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 		except:
 
-			self.error.show(message = CANT_LAUNCH)					
+			self.error.show(message = CANT_LAUNCH_VIDEO_MSG)					
 
 	def launch_video(self):
 		try:
 			if self.selected_video is None:
-				self.error.show(message = NOT_SELECTED)
-
+				self.error.show(message = VIDEO_NOT_SELECTED_MSG)
 				return
+
 			self.tmp = self.selected_video					
 			self.launch = True
 
@@ -191,8 +178,7 @@ class App():
 		if self.pause == True:
 			pass
 		if self.selected_video is None:
-			self.error.show(message = NOT_SELECTED)
-
+			self.error.show(message = VIDEO_NOT_SELECTED_MSG)
 
 		self.launch = False	
 		self.pause = True
@@ -203,34 +189,31 @@ class App():
 
 	def take_a_snapshot(self):
 		if self.selected_video is None or self.launch == False:
-			self.error.show(message = NOT_SELECTED)
-
+			self.error.show(message = VIDEO_NOT_SELECTED_MSG)
 			return
 
 		ret, frame = self.get_frame()	
 		if ret:
-			cv2.imwrite(os.path.join(SNAPSHOTS, "frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg"), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
-			
+			cv2.imwrite(os.path.join(SNAPSHOTS_FOLDER, "frame-" + time.strftime("%d-%m-%Y-%H-%M-%S") + ".jpg"), cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+			print(1)
+		else:
+			print(0)	
+
 	def recognize_faces(self):
 
 		if self.selected_video is None:
-			self.error.show(message = NOT_SELECTED)
+			self.error.show(message = VIDEO_NOT_SELECTED_MSG)
 		else:
 			self.helper.remove_old_processed_photos()
-
 			self.helper.crop_images_from_the_collection()
-			messagebox.showinfo(message = "Обличчя з фото оброблені та збережені!")
-			
+				
 			video = Video(self.selected_video)
-			self.helper.iterate_processed_images(video)
-			
-			# CROP IMAGES -> CV2GRAY -> ENCODINGS
-			# FRAMES CYCLE : LOCATIONS/ENCODINGS -> COMPARING
-			
+					
+			visitors = self.helper.iterate_processed_images(video)
+			report = Report(visitors)
+			report.send()
+
 	def __del__(self):
-		try:
-			if self.cap.isOpened():
-				self.cap.release()
-				cv2.destroyAllWindows()
-		except:
-			pass			
+		if self.cap.isOpened():
+			self.cap.release()
+			cv2.destroyAllWindows()

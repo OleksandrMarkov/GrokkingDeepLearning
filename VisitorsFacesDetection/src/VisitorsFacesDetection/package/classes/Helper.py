@@ -7,12 +7,11 @@ from package.classes.Image import *
 from package.classes.ProcessedImage import *
 
 import subprocess # для виявлення флешки
-import time
 
 class Helper:
 	def remove_old_snapshots(self):
-		for files in os.listdir(SNAPSHOTS):
-			full_path = os.path.join(SNAPSHOTS, files)
+		for files in os.listdir(SNAPSHOTS_FOLDER):
+			full_path = os.path.join(SNAPSHOTS_FOLDER, files)
 			try:
 				shutil.rmtree(full_path)
 			except OSError:
@@ -27,7 +26,7 @@ class Helper:
 				os.remove(full_path)		
 
 	def get_videofile(self):
-		return filedialog.askopenfilename(title = SELECT_VIDEO,
+		return filedialog.askopenfilename(title = SELECT_VIDEO_LBL,
 			initialdir = VIDEOS_FOLDER,
 			filetypes = VIDEOTYPES)
 
@@ -40,7 +39,6 @@ class Helper:
 				if drive_letter not in PC_DISKS:
 					path = 	f"{drive_letter}:/{IMAGES_FOLDER_ON_USB_FLASH_DRIVE}"
 					break
-		#print(path) # F:/photos 			
 		return path
 		
 	def move_images(self, path):
@@ -57,35 +55,19 @@ class Helper:
 				if (".jpg" in image_name or ".png" in image_name or ".gif" in image_name) and (PROCESSED_PHOTOS_FOLDER not in os.path.join(root, image_name).replace("\\", "/")):
 					try:	
 						path = os.path.join(root, image_name).replace("\\", "/")
-						
 						img = Image(path)
-						#img.test()
-						img.crop_face()
-							
+						img.crop_face()				
 					except Exception as e:
 						pass
 
 	def iterate_processed_images(self, video):
 		images_dict = {}			
 		for (root, dirs, images) in os.walk(PROCESSED_PHOTOS_FOLDER):
-			for image_name in images:
-				# dataset/photos/processed photos/will_smith.png
-				
+			for image_name in images:		
 				path = os.path.join(root, image_name).replace("\\", "/")
-				#print(path)
-				
 				image = ProcessedImage(path)
 				image_encodings = image.get_encodings()
-
 				images_dict[image] = image_encodings
-		
-		print(len(images_dict))				
-		print("All faces are checked!")
-
 		captured_visitors = video.get_capture_matches(images_dict)
 		
-		#snapshots_amount = self.get_amount_of_snapshots()
-
-		report = Report(captured_visitors)
-		report.send()
-						
+		return captured_visitors
