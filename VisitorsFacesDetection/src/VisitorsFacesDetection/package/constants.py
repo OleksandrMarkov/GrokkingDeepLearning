@@ -13,9 +13,7 @@ PROCESSED_PHOTOS_FOLDER = "dataset/photos/processed photos"
 VIDEOTYPES = (("MP4 files", "*.mp4"),
         ("WMV files", "*.wmv"),
         ("AVI files", "*.avi"))
-IMGTYPES = (("JPEG", "*.jpg"),
-         ("PNG", "*.png"),
-         ("GIF", "*.gif"))
+
 IMAGE_ENDS_WITH = ('jpg', 'png', 'gif')
 
 # windows, frames and buttons settings
@@ -44,7 +42,6 @@ FAQ_STEP2 = "Оберіть відеозапис для перегляду та 
 FAQ_STEP3 = "Виконайте запуск, ставте відео на паузу, робіть скріншоти"
 FAQ_STEP4 = "Здійснюйте розпізнавання; результати будуть надіслані повідомленням в Telegram"
 
-SELECT_IMAGE_LBL = "Оберіть зображення"
 SELECT_VIDEO_LBL = "Обрати відеозапис"
 RECOGNIZE_FACES_MSG = "Виконати розпізнавання"
 ADD_NEW_IMAGES_LBL = "Додати нові фото"

@@ -7,12 +7,6 @@ class ProcessedImage(Image):
 	def __init__(self, path):
 		self.path = path	
 		self.img = cv2.imread(path)
-		self.face_cascade = cv2.CascadeClassifier(FACE_RECOG_MODEL)
-
-	def get_faces(self):
-		gray = self.convert2Gray()
-		faces = self.face_cascade.detectMultiScale(gray, scaleFactor = 1.1, minNeighbors = 4)
-		return faces
 
 	def get_encodings(self):
 		try:
